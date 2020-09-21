@@ -1,0 +1,22 @@
+# TooAngel Speedrun bot
+
+https://lua-api.factorio.com/latest/index.html
+
+## Seed:
+
+```
+>>>eNpjZICDBnsQ5mBJzk/MgfEYGA44cCXnFxSkFunmF6UiC3MmF
+5WmpOrmZ6IqTs1Lza3UTUosRlIMNDWzKD8P3QTW4pL8PFSRkqLU1
+GJkjdylRYl5maW56HoZGL+ES81vaJFjAOH/9QwK//+DMJD1AOgXE
+GZgbACpZmQEisEAa3JOZloaA4OCIxA7QaQZYZJQhp4DlPHBHsI4k
+AQT8YQx/BxwSqnAGCZI5hiDwWckRrXIOveHVSVAK6CqOBwQDIhkC
+0iSkbH37dYF349dsGP8s/LjJd+kBHtGQ1eRdx+M1tkBJdlB7maCE
+7NmgsBOe5ifYGY+sIdK3bRnPHsGBN7YM7KCdIiACAcLIHHAm5mBU
+YAPyFrQAyQUZOAhYgczRsSBMQ0MvsF88hjGuGyP7g9gQNiADJcDE
+SdABCsikIEugwa8Q78Do4M8TFYSoQSo34gB2Q0pCB+ehFl7GMl+N
+IdgRgSyP9BEVBywRAMXyMIUOPGCGe4aYHheYIfxHOY7MDKDGCBVX
+4BiEB5IBmYUhBZwYEZkN1CymBxpbAUA2ZCeVw==<<<
+```
+
+
+Regarding cutscene: https://forums.factorio.com/viewtopic.php?f=25&t=87938
