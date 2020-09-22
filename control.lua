@@ -14,7 +14,7 @@ local function getFromInventory(table, player)
   if not player.get_main_inventory then
     return false
   end
-  inventory = player.get_main_inventory()
+  local inventory = player.get_main_inventory()
   log(string.format("getFromInventory %s", table.param))
   for i = 1, #inventory do
     if not inventory[i] then
@@ -40,14 +40,16 @@ local function placeFromCursor(table, player)
   local distance = getDistance(player.position, position)
   if distance < 10 then
     log('placeFromCursor')
-    response = player.build_from_cursor{position={position.x, position.y}, direction=defines.direction.north}
+    response = player.build_from_cursor{position={position.x, position.y}, direction=table.direction}
     return true
   end
 end
 
 local function fuelEntity(table, player)
   log(string.format("fuelEntity %s %d", table.param, table.count))
+  getFromInventory({param='wood'}, player)
   local entity = player.surface.find_entity(table.param, table.pos)
+  log(entity)
   -- don't like this
   inserted = entity.get_fuel_inventory().insert{name=player.cursor_stack.name, count=table.count}
   if player.cursor_stack.count - table.count > 0 then
@@ -62,6 +64,7 @@ local function mineEntity(table, player)
   if distance > 3 then
     return false
   end
+
   log(string.format("mineEntity %s", table.type))
   if table.limit then
     inventory = player.get_main_inventory()
@@ -89,9 +92,11 @@ local function mineEntity(table, player)
   }
   local entities = player.surface.find_entities_filtered{area = area, type = table.type}
   if #entities > 0 then
-    local entity = entities[1]
-    return player.mine_entity(entity)
+    player.update_selected_entity(table.param)
+    player.mining_state = {mining = true, position=table.param}
+    return false
   end
+  return true
 end
 
 local function craft(table, player)
@@ -111,28 +116,13 @@ local function pickup(table, player)
     if not inventory[i].valid_for_read then
       return
     end
-    log(inventory[i].type)
-    log(inventory[i].name)
-    log(inventory[i].count)
-    log(serpent.block(inventory[i]))
     local emptyStack = player.get_main_inventory().find_empty_stack()
-    log(emptyStack)
     return emptyStack.transfer_stack(inventory[i])
   end
 end
 
-waitTimer = 0
-
-local function wait(table, player)
-  if waitTimer == 0 then
-    waitTimer = table.duration
-  end
-  waitTimer = waitTimer - 1
-  if waitTimer == 0 then
-    return true
-  end
-  game.players[1].walking_state = {walking = false}
-  return false
+local function cleanCursor(table, player)
+  return player.clean_cursor()
 end
 
 steps = {
@@ -142,17 +132,14 @@ steps = {
     direction = defines.direction.southwest,
     tasks = {
       {call=getFromInventory, param='burner-mining-drill'},
-      {call=placeFromCursor, param={x=-31, y=21}},
-      {call=getFromInventory, param='wood'},
-      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=1},
+      {call=placeFromCursor, param={x=-31, y=21}, direction=defines.direction.north},
+      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=1, fuel='wood'},
       {call=getFromInventory, param='stone-furnace'},
       {call=placeFromCursor, param={x=-31, y=19}},
       {call=mineEntity, param={x=-21, y=22}, type="tree"},
       {call=craft, count=3, recipe='iron-gear-wheel'},
-      {call=getFromInventory, param='wood'},
-      {call=fuelEntity, param='stone-furnace', pos={x=-31, y=19}, count=1},
-      {call=getFromInventory, param='wood'},
-      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=1},
+      {call=fuelEntity, param='stone-furnace', pos={x=-31, y=19}, count=1, fuel='wood'},
+      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=1, fuel='wood'},
     }
   },
   {
@@ -163,12 +150,9 @@ steps = {
       {call=mineEntity, param={x=-56, y=32}, type="resource", limit={type="stone", count=10}},
       {call=craft, count=2, recipe='stone-furnace'},
       {call=mineEntity, param={x=-61, y=30}, type="tree"},
-      {call=mineEntity, param={x=-67, y=31}, type="tree"},
       {call=mineEntity, param={x=-66, y=32}, type="tree"},
       {call=craft, count=2, recipe='wooden-chest'},
       {call=mineEntity, param={x=-73, y=31}, type="resource", limit={type="coal", count=10}},
-      -- Wait because mining is too fast
-      {call=wait, duration=1000}
     }
   },
   {
@@ -181,10 +165,8 @@ steps = {
     position = {x=-32, y=23},
     direction = defines.direction.north,
     tasks = {
-      {call=getFromInventory, param='coal'},
-      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=4},
-      {call=getFromInventory, param='coal'},
-      {call=fuelEntity, param='stone-furnace', pos={x=-31, y=19}, count=4},
+      {call=fuelEntity, param='burner-mining-drill', pos={x=-31, y=21}, count=4, fuel='coal'},
+      {call=fuelEntity, param='stone-furnace', pos={x=-31, y=19}, count=4, fuel='coal'},
       {call=pickup, param='stone-furnace', pos={x=-31, y=19}},
       {call=craft, count=2, recipe='burner-mining-drill'},
       {call=craft, count=3, recipe='iron-gear-wheel'},
@@ -197,24 +179,42 @@ steps = {
   },
   {
     goal = 'Stone drill',
-    position = {x=-54, y=35},
+    position = {x=-51, y=35},
     direction = defines.direction.west,
+    tasks = {
+      {call=getFromInventory, param='burner-mining-drill'},
+      {call=placeFromCursor, param={x=-53, y=37}, direction=defines.direction.west},
+      {call=getFromInventory, param='wooden-chest'},
+      {call=placeFromCursor, param={x=-55, y=37}, direction=defines.direction.west},
+      {call=cleanCursor},
+      {call=getFromInventory, param='coal'},
+      {call=fuelEntity, param='burner-mining-drill', pos={x=-53, y=37}, count=2},
+    }
+  },
+  {
+    goal = 'Coal drill',
+    position = {x=-44, y=34},
+    direction = defines.direction.east,
+    tasks = {
+      -- {call=pickup, param='stone-furnace', pos={x=-31, y=19}},
+      -- {call=craft, count=1, recipe='burner-mining-drill'},
+    }
   }
 }
 
 function walk(player)
-  if math.abs(player.position.x - steps[1].position.x) < 1 and math.abs(player.position.y - steps[1].position.y) < 1 then
+  if (not steps[1].tasks or #steps[1].tasks == 0) and math.abs(player.position.x - steps[1].position.x) < 1 and math.abs(player.position.y - steps[1].position.y) < 1 then
     table.remove(steps, 1)
     if not steps or #steps == 0 then
       return
     end
     player.set_goal_description(steps[1].goal)
   end
-  game.players[1].walking_state = {walking = true, direction = steps[1].direction}
+  player.walking_state = {walking = true, direction = steps[1].direction}
 end
 
 function executeTask(player)
-  if not steps or #steps == 0then
+  if not steps or #steps == 0 then
     return
   end
   if not steps[1].tasks then
