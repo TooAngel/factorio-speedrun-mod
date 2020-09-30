@@ -11,51 +11,64 @@ script.on_init(function()
 end)
 
 function walk(player)
-  if (not steps[1].tasks or #steps[1].tasks == 0) and math.abs(player.position.x - steps[1].position.x) < 1 and math.abs(player.position.y - steps[1].position.y) < 1 then
-    table.remove(steps, 1)
-    if not steps or #steps == 0 then
+  if global.task > #steps[global.step].tasks
+  and math.abs(player.position.x - steps[global.step].position.x) < 1
+  and math.abs(player.position.y - steps[global.step].position.y) < 1 then
+    global.step = global.step + 1
+    global.task = 1
+    if global.step > #steps then
       return
     end
-    if player.get_goal_description() ~= steps[1].goal then
-      player.set_goal_description(steps[1].goal)
+    if player.get_goal_description() ~= steps[global.step].goal then
+      player.set_goal_description(steps[global.step].goal)
     end
   end
-  player.walking_state = {walking = true, direction = steps[1].direction}
+  player.walking_state = {walking = true, direction = steps[global.step].direction}
 end
 
 function executeTask(player)
-  if not steps or #steps == 0 then
+  if global.step > #steps then
     return
   end
-  if not steps[1].tasks then
+  if not steps[global.step].tasks or global.task > #steps[global.step].tasks  then
     return false
   end
-  task = steps[1].tasks[1]
+  task = steps[global.step].tasks[global.task]
   if not task then
     return false
   end
   if task:call(player) then
-    table.remove(steps[1].tasks, 1)
+    global.task = global.task + 1
   end
 end
 
 script.on_event(defines.events.on_tick,
   function(event)
-    local player = game.players[1]
-      if event.tick == 1 then
-        player.set_goal_description(steps[1].goal)
-        player.set_quick_bar_slot(1, 'wood')
-        player.set_quick_bar_slot(2, 'coal')
-        player.set_quick_bar_slot(3, 'stone')
-        player.set_quick_bar_slot(4, 'iron-plate')
-        player.set_quick_bar_slot(5, 'iron-gear-wheel')
-        player.set_quick_bar_slot(6, 'stone-furnace')
-        player.set_quick_bar_slot(7, 'burner-mining-drill')
-        player.set_quick_bar_slot(8, 'wooden-chest')
-      end
+    if not global.step then
+      global.step = 1
+    end
+    if not global.task then
+      global.task = 1
+    end
+    if not steps[global.step].tasks then
+      steps[global.step].tasks = {}
+    end
 
-      log(string.format("%d: %d %d", event.tick, player.position.x, player.position.y))
-    if not steps or #steps == 0 then
+    local player = game.players[1]
+    if event.tick == 1 then
+      player.set_goal_description(steps[1].goal)
+      player.set_quick_bar_slot(1, 'wood')
+      player.set_quick_bar_slot(2, 'coal')
+      player.set_quick_bar_slot(3, 'stone')
+      player.set_quick_bar_slot(4, 'iron-plate')
+      player.set_quick_bar_slot(5, 'iron-gear-wheel')
+      player.set_quick_bar_slot(6, 'stone-furnace')
+      player.set_quick_bar_slot(7, 'burner-mining-drill')
+      player.set_quick_bar_slot(8, 'wooden-chest')
+    end
+
+    log(string.format("%d: %d %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.step, #steps, global.task, #steps[global.step].tasks))
+    if global.step > #steps then
       return
     end
     walk(player)
