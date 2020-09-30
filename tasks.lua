@@ -8,8 +8,6 @@ local function pickup(table, player)
   log(string.format("pickup from %s", table.param))
 
   local entity = player.surface.find_entity(table.param, table.pos)
-  log(serpent.block(entity))
-  log(entity)
   if not entity then
     return false
   end
@@ -30,8 +28,43 @@ local function pickup(table, player)
   end
 end
 
+local function pickupFromChest(table, player)
+  local distance = helper.getDistance(player.position, table.pos)
+  if distance > 8 then
+    return false
+  end
+  log(string.format("pickupFromChest from %s", table.type))
+
+  area = {
+    {table.pos.x-1, table.pos.y-1},
+    {table.pos.x+1, table.pos.y+1},
+  }
+  local entities = player.surface.find_entities_filtered{area = area, type = table.type}
+  local entity = entities[1]
+  if not entity then
+    return false
+  end
+  local inventory = entity.get_output_inventory()
+  if not inventory then
+    log('no output inventory')
+    inventory = entity.get_inventory(defines.inventory.chest)
+  end
+  for i = 1, #inventory do
+    if not inventory[i] then
+      -- continue does not exist, return is not good, too
+      return
+    end
+    if not inventory[i].valid_for_read then
+      return
+    end
+    local emptyStack = player.get_main_inventory().find_empty_stack()
+    return emptyStack.transfer_stack(inventory[i])
+  end
+end
+
+
 local function fuelEntity(table, player)
-  log(string.format("fuelEntity %s %d", table.type, table.count))
+  log(string.format("fuelEntity %s %d %s", table.type, table.count, table.fuel))
   helper.getFromInventory({param=table.fuel}, player)
   local entity = player.surface.find_entity(table.type, table.pos)
   -- don't like this
@@ -114,6 +147,7 @@ end
 return {
   craft=craft,
   pickup=pickup,
+  pickupFromChest=pickupFromChest,
   fuelEntity=fuelEntity,
   mineEntity=mineEntity,
   placeEntity=placeEntity,

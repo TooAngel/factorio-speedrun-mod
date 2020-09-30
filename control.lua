@@ -54,7 +54,7 @@ script.on_event(defines.events.on_tick,
         player.set_quick_bar_slot(8, 'wooden-chest')
       end
 
-    log(string.format("%d: %d %d", event.tick, player.position.x, player.position.y))
+      log(string.format("%d: %d %d", event.tick, player.position.x, player.position.y))
     if not steps or #steps == 0 then
       return
     end
