@@ -11,9 +11,13 @@ script.on_init(function()
 end)
 
 function walk(player)
-  if global.task > #steps[global.step].tasks
-  and math.abs(player.position.x - steps[global.step].position.x) < 1
-  and math.abs(player.position.y - steps[global.step].position.y) < 1 then
+  if math.abs(player.position.x - steps[global.step].position.x) > 1
+  or math.abs(player.position.y - steps[global.step].position.y) > 1 then
+    player.walking_state = {walking = true, direction = steps[global.step].direction}
+    return
+  end
+
+  if global.task > #steps[global.step].tasks then
     global.step = global.step + 1
     global.task = 1
     if global.step > #steps then
@@ -23,7 +27,6 @@ function walk(player)
       player.set_goal_description(steps[global.step].goal)
     end
   end
-  player.walking_state = {walking = true, direction = steps[global.step].direction}
 end
 
 function executeTask(player)
@@ -42,6 +45,19 @@ function executeTask(player)
   end
 end
 
+function firstTick(player)
+  player.set_goal_description(steps[1].goal)
+  player.set_quick_bar_slot(1, 'wood')
+  player.set_quick_bar_slot(2, 'coal')
+  player.set_quick_bar_slot(3, 'stone')
+  player.set_quick_bar_slot(4, 'iron-plate')
+  player.set_quick_bar_slot(5, 'copper-plate')
+  player.set_quick_bar_slot(6, 'iron-gear-wheel')
+  player.set_quick_bar_slot(7, 'stone-furnace')
+  player.set_quick_bar_slot(8, 'burner-mining-drill')
+  player.set_quick_bar_slot(9, 'wooden-chest')
+end
+
 script.on_event(defines.events.on_tick,
   function(event)
     if not global.step then
@@ -50,27 +66,23 @@ script.on_event(defines.events.on_tick,
     if not global.task then
       global.task = 1
     end
-    if not steps[global.step].tasks then
-      steps[global.step].tasks = {}
-    end
 
     local player = game.players[1]
     if event.tick == 1 then
-      player.set_goal_description(steps[1].goal)
-      player.set_quick_bar_slot(1, 'wood')
-      player.set_quick_bar_slot(2, 'coal')
-      player.set_quick_bar_slot(3, 'stone')
-      player.set_quick_bar_slot(4, 'iron-plate')
-      player.set_quick_bar_slot(5, 'iron-gear-wheel')
-      player.set_quick_bar_slot(6, 'stone-furnace')
-      player.set_quick_bar_slot(7, 'burner-mining-drill')
-      player.set_quick_bar_slot(8, 'wooden-chest')
+      firstTick(player)
     end
 
-    log(string.format("%d: %d %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.step, #steps, global.task, #steps[global.step].tasks))
-    if global.step > #steps then
-      return
+    if steps[global.step] and not steps[global.step].tasks then
+      steps[global.step].tasks = {}
     end
+
+    if global.step > #steps then
+      log(string.format("%d: %d %d", event.tick, player.position.x, player.position.y))
+      return
+    else
+      log(string.format("%d: %d %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.step, #steps, global.task, #steps[global.step].tasks))
+    end
+
     walk(player)
     executeTask(player)
   end

@@ -1,72 +1,74 @@
 helper = require('helper')
 
-local function pickup(table, player)
-  local distance = helper.getDistance(player.position, table.pos)
-  if distance > 8 then
-    return false
-  end
-  log(string.format("pickup from %s", table.param))
-
-  local entity = player.surface.find_entity(table.param, table.pos)
-  if not entity then
-    return false
-  end
-  local inventory = entity.get_output_inventory()
-  if not inventory then
-    inventory = entity.get_inventory(defines.inventory.chest)
-  end
-  for i = 1, #inventory do
-    if not inventory[i] then
-      -- continue does not exist, return is not good, too
-      return
-    end
-    if not inventory[i].valid_for_read then
-      return
-    end
-    local emptyStack = player.get_main_inventory().find_empty_stack()
-    return emptyStack.transfer_stack(inventory[i])
-  end
-end
-
 local function pickupFromChest(table, player)
-  local distance = helper.getDistance(player.position, table.pos)
+  if table.structure then
+    type = table.structure.type
+    pos = table.structure.pos
+  else
+    log(string.format("%s not yet in structure format", table.type))
+    type = table.type
+    pos = table.pos
+  end
+  local distance = helper.getDistance(player.position, pos)
   if distance > 8 then
     return false
   end
-  log(string.format("pickupFromChest from %s", table.type))
+  log(string.format("pickupFromChest from %s", type))
 
   area = {
-    {table.pos.x-1, table.pos.y-1},
-    {table.pos.x+1, table.pos.y+1},
+    {pos.x-1, pos.y-1},
+    {pos.x+1, pos.y+1},
   }
-  local entities = player.surface.find_entities_filtered{area = area, type = table.type}
+  local entities = player.surface.find_entities_filtered{area = area, type = type}
   local entity = entities[1]
   if not entity then
     return false
   end
-  local inventory = entity.get_output_inventory()
-  if not inventory then
-    log('no output inventory')
-    inventory = entity.get_inventory(defines.inventory.chest)
-  end
+  local inventory = entity.get_inventory(defines.inventory.chest)
+  success = false
   for i = 1, #inventory do
-    if not inventory[i] then
-      -- continue does not exist, return is not good, too
-      return
+    if inventory[i] and inventory[i].valid_for_read then
+      local emptyStack = player.get_main_inventory().find_empty_stack()
+      success = success or emptyStack.transfer_stack(inventory[i])
     end
-    if not inventory[i].valid_for_read then
-      return
-    end
-    local emptyStack = player.get_main_inventory().find_empty_stack()
-    return emptyStack.transfer_stack(inventory[i])
   end
+
+  if table.limit then
+    inventory = player.get_main_inventory()
+    count = 0
+    for i = 1, #inventory do
+      if not inventory[i] then
+        goto continue
+      end
+      if not inventory[i].valid_for_read then
+        goto continue
+      end
+      if inventory[i].name == table.limit.type then
+        count = count + inventory[i].count
+      end
+      if count >= table.limit.count then
+        return true
+      end
+      ::continue::
+    end
+    return false
+  end
+  return success
 end
 
 
 local function fuelEntity(table, player)
-  log(string.format("fuelEntity %s %d %s", table.type, table.count, table.fuel))
+  if table.structure then
+    type = table.structure.type
+    pos = table.structure.pos
+  else
+    log(string.format("%s not yet in structure format", table.type))
+    type = table.type
+    pos = table.pos
+  end
+  log(string.format("fuelEntity %s %d %s", type, table.count, table.fuel))
   helper.getFromInventory({param=table.fuel}, player)
-  local entity = player.surface.find_entity(table.type, table.pos)
+  local entity = player.surface.find_entity(type, pos)
   -- don't like this
   inserted = entity.get_fuel_inventory().insert{name=player.cursor_stack.name, count=table.count}
   if player.cursor_stack.count - table.count > 0 then
@@ -77,17 +79,22 @@ local function fuelEntity(table, player)
 end
 
 local function placeEntity(table, player)
-  local distance = helper.getDistance(player.position, table.pos)
+  type = table.structure.type
+  pos = table.structure.pos
+  direction = table.structure.direction
+  entity = table.structure.entity
+
+  local distance = helper.getDistance(player.position, pos)
   if distance > 9 then
     return false
   end
 
-  log(string.format("placeEntity %s", table.type))
-  helper.getFromInventory({param=table.type}, player)
-  if not player.can_build_from_cursor{position={table.pos.x, table.pos.y}, direction=table.direction} then
+  log(string.format("placeEntity %s", entity))
+  helper.getFromInventory({param=entity}, player)
+  if not player.can_build_from_cursor{position={pos.x, pos.y}, direction=direction} then
    return false
   end
-  player.build_from_cursor{position={table.pos.x, table.pos.y}, direction=table.direction}
+  player.build_from_cursor{position={pos.x, pos.y}, direction=direction}
   player.clean_cursor()
   -- Todo somehow check if building was successful
   -- local entity = player.surface.find_entity(table.type, table.pos)
@@ -98,6 +105,61 @@ local function placeEntity(table, player)
     fuelEntity(table, player)
   end
   return true
+end
+
+local function pickup(table, player)
+  if table.structure then
+    type = table.structure.type
+    pos = table.structure.pos
+  else
+    log(string.format("%s not yet in structure format", table.type))
+    type = table.param
+    pos = table.pos
+  end
+
+  local distance = helper.getDistance(player.position, pos)
+  if distance > 8 then
+    return false
+  end
+  log(string.format("pickup from %s", type))
+
+  local entity = player.surface.find_entity(type, pos)
+  if not entity then
+    return false
+  end
+  local inventory = entity.get_output_inventory()
+  local success = false
+  for i = 1, #inventory do
+    if inventory[i] and inventory[i].valid_for_read then
+      local emptyStack = player.get_main_inventory().find_empty_stack()
+      success = success or emptyStack.transfer_stack(inventory[i])
+    end
+  end
+
+  if table.limit then
+    inventory = player.get_main_inventory()
+    count = 0
+    for i = 1, #inventory do
+      if not inventory[i] then
+        goto continue
+      end
+      if not inventory[i].valid_for_read then
+        goto continue
+      end
+      if inventory[i].name == table.limit.type then
+        count = count + inventory[i].count
+      end
+      if count >= table.limit.count then
+        return true
+      end
+      ::continue::
+    end
+    return false
+  end
+  if table.fuel then
+    fuelEntity(table, player)
+  end
+  return success
 end
 
 local function craft(table, player)
@@ -137,6 +199,7 @@ local function mineEntity(table, player)
   }
   local entities = player.surface.find_entities_filtered{area = area, type = table.type}
   if #entities > 0 then
+    log('mine entity')
     player.update_selected_entity(table.param)
     player.mining_state = {mining = true, position=table.param}
     return false

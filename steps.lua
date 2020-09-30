@@ -1,17 +1,18 @@
 tasks = require('tasks')
+structures = require('structures')
 
-steps = {
+local steps = {
   {
     goal = 'First burner',
     position = {x=-32, y=32},
     direction = defines.direction.southwest,
     tasks = {
-      {call=tasks.placeEntity, type='burner-mining-drill', pos={x=-31, y=21}, direction=defines.direction.north, fuel='wood', count=1},
-      {call=tasks.placeEntity, type='stone-furnace', pos={x=-31, y=19}, direction=defines.direction.north},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.iron[1], count=1, fuel='wood'},
+      {call=tasks.placeEntity, structure=structures.stoneFurnace.iron[1]},
       {call=tasks.mineEntity, param={x=-21, y=22}, type="tree"},
       {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
-      {call=tasks.fuelEntity, type='stone-furnace', pos={x=-31, y=19}, count=2, fuel='wood'},
-      {call=tasks.fuelEntity, type='burner-mining-drill', pos={x=-31, y=21}, count=2, fuel='wood'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=2, fuel='wood'},
+      {call=tasks.fuelEntity, structure=structures.stoneFurnace.iron[1], count=2, fuel='wood'},
     }
   },
   {
@@ -39,9 +40,9 @@ steps = {
     position = {x=-36, y=22},
     direction = defines.direction.northeast,
     tasks = {
-      {call=tasks.fuelEntity, type='burner-mining-drill', pos={x=-31, y=21}, count=3, fuel='coal'},
-      {call=tasks.fuelEntity, type='stone-furnace', pos={x=-31, y=19}, count=3, fuel='coal'},
-      {call=tasks.pickup, param='stone-furnace', pos={x=-31, y=19}},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=3, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.stoneFurnace.iron[1], count=3, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
       {call=tasks.craft, count=1, recipe='burner-mining-drill'},
       {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
     }
@@ -56,14 +57,14 @@ steps = {
     position = {x=-71, y=34},
     direction = defines.direction.west,
     tasks = {
-      {call=tasks.placeEntity, type='burner-mining-drill', pos={x=-73, y=36}, direction=defines.direction.west, fuel='coal', count=2},
-      {call=tasks.placeEntity, type='wooden-chest', pos={x=-75, y=36}, direction=defines.direction.west},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.coal[1], fuel='coal', count=2},
+      {call=tasks.placeEntity, structure=structures.chest.coal[1], direction=defines.direction.west},
       {call=tasks.mineEntity, param={x=-68, y=33}, type="resource", limit={type="coal", count=4}},
     }
   },
   {
     goal = 'Stone drill',
-    position = {x=-44, y=34},
+    position = {x=-43, y=34},
     direction = defines.direction.east,
     tasks = {
       {call=tasks.mineEntity, param={x=-56, y=32}, type="resource", limit={type="stone", count=15}},
@@ -72,10 +73,10 @@ steps = {
   },
   {
     goal = 'Stone drill',
-    position = {x=-36, y=25},
+    position = {x=-33, y=23},
     direction = defines.direction.northeast,
     tasks = {
-      {call=tasks.pickup, param='stone-furnace', pos={x=-31, y=19}},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
       {call=tasks.craft, count=1, recipe='burner-mining-drill'},
       {call=tasks.craft, count=1, recipe='burner-mining-drill'},
     }
@@ -85,22 +86,22 @@ steps = {
     position = {x=-49, y=38},
     direction = defines.direction.southwest,
     tasks = {
-      {call=tasks.placeEntity, type='stone-furnace', pos={x=-33, y=19}, direction=defines.direction.north, fuel='coal', count=2},
+      {call=tasks.placeEntity, structure=structures.stoneFurnace.iron[2], fuel='coal', count=2},
     }
   },
   {
     goal = 'Stone drill',
-    position = {x=-71, y=37},
+    position = {x=-71, y=38},
     direction = defines.direction.west,
     tasks = {
-      {call=tasks.placeEntity, type='burner-mining-drill', pos={x=-56, y=39}, direction=defines.direction.west, fuel='coal', count=2},
-      {call=tasks.placeEntity, type='wooden-chest', pos={x=-58, y=39}, direction=defines.direction.west},
-      {call=tasks.pickupFromChest, type='container', pos={x=-74, y=36}},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.stone[1], fuel='coal', count=2},
+      {call=tasks.placeEntity, structure=structures.chest.stone[1]},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
     }
   },
   {
     goal = '2nd iron miner',
-    position = {x=-44, y=37},
+    position = {x=-44, y=38},
     direction = defines.direction.east,
   },
   {
@@ -108,11 +109,11 @@ steps = {
     position = {x=-33, y=25},
     direction = defines.direction.northeast,
     tasks = {
-      {call=tasks.pickup, param='stone-furnace', pos={x=-31, y=19}},
-      {call=tasks.placeEntity, type='burner-mining-drill', pos={x=-33, y=21}, direction=defines.direction.north, fuel='coal', count=2},
-      {call=tasks.fuelEntity, type='burner-mining-drill', pos={x=-31, y=21}, count=2, fuel='coal'},
-      {call=tasks.fuelEntity, type='stone-furnace', pos={x=-31, y=19}, count=2, fuel='coal'},
-      {call=tasks.fuelEntity, type='stone-furnace', pos={x=-33, y=19}, count=2, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.iron[2], fuel='coal', count=2},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=2, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.stoneFurnace.iron[1], count=2, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.stoneFurnace.iron[2], count=2, fuel='coal'},
     }
   },
   {
@@ -124,13 +125,292 @@ steps = {
   },
   {
     goal = 'Get resources',
-    position = {x=-71, y=37},
+    position = {x=-72, y=38},
     direction = defines.direction.west,
     tasks = {
-      {call=tasks.pickupFromChest, type='container', pos={x=-58, y=39}},
-      {call=tasks.pickupFromChest, type='container', pos={x=-74, y=36}},
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.stone[1], count=1, fuel='coal'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.coal[1], count=2, fuel='coal'},
+    }
+  },
+  {
+    goal = 'Some wood',
+    position = {x=-72, y=44},
+    direction = defines.direction.south,
+    tasks = {
+      {call=tasks.mineEntity, param={x=-72, y=43}, type="tree"},
+    }
+  },
+  {
+    goal = 'Some wood',
+    position = {x=-51, y=43},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.mineEntity, param={x=-69, y=43}, type="tree"},
+      {call=tasks.mineEntity, param={x=-66, y=43}, type="tree"},
+      {call=tasks.mineEntity, param={x=-64, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-65, y=43}, type="tree"},
+      {call=tasks.mineEntity, param={x=-66, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-67, y=45}, type="tree"},
+    }
+  },
+  {
+    goal = 'Get stone and iron',
+    position = {x=-33, y=25},
+    direction = defines.direction.northeast,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1], limit={type="stone", count=5}},
+      {call=tasks.craft, count=1, recipe='stone-furnace'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[2], count=1, fuel='coal'},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+    }
+  },
+  {
+    goal = '2nd stone drill',
+    position = {x=-46, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '2nd stone drill',
+    position = {x=-72, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.coal[1], count=1, fuel='coal'},
+    }
+  },
+  {
+    goal = '2nd stone drill',
+    position = {x=-46, y=37},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.stone[2], count=2, fuel='coal'},
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+    }
+  },
+  {
+    goal = '3rd iron combi',
+    position = {x=-33, y=23},
+    direction = defines.direction.northeast,
+    tasks = {
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[2], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1], limit={type="iron-plate", count=6}},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2], limit={type="iron-plate", count=3}},
+    }
+  },
+  {
+    goal = '3rd iron combi',
+    position = {x=-46, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '3rd iron combi',
+    position = {x=-72, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.coal[1], count=1, fuel='coal'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1], limit={type="coal", count=5}},
+    }
+  },
+  {
+    goal = '3rd iron combi',
+    position = {x=-46, y=37},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1], limit={type="stone", count=5}},
+      {call=tasks.craft, count=1, recipe='stone-furnace'},
+    }
+  },
+  {
+    goal = '2nd coal',
+    position = {x=-33, y=23},
+    direction = defines.direction.northeast,
+    tasks = {
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.iron[3], count=1, fuel='coal'},
+      {call=tasks.placeEntity, structure=structures.stoneFurnace.iron[3], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[3]},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1], limit={type="iron-plate", count=6}},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2], limit={type="iron-plate", count=9}},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+    }
+  },
+  {
+    goal = '2nd coal',
+    position = {x=-46, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '2nd coal',
+    position = {x=-72, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.coal[2], count=2, fuel='coal'},
+    }
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-46, y=37},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1], limit={type="stone", count=5}},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.stone[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.stone[2], count=1, fuel='coal'},
+      {call=tasks.craft, count=1, recipe='stone-furnace'},
+    }
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-33, y=23},
+    direction = defines.direction.northeast,
+    tasks = {
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[3], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1], limit={type="iron-plate", count=3}},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2], limit={type="iron-plate", count=6}},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[3], limit={type="iron-plate", count=6}},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+    }
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-46, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-70, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.craft, count=1, recipe='stone-furnace'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+    }
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-49, y=16},
+    direction = defines.direction.northeast,
+  },
+  {
+    goal = '1st Copper',
+    position = {x=-18, y=16},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.copper[1], count=2, fuel='coal'},
+      {call=tasks.placeEntity, structure=structures.stoneFurnace.copper[1], count=2, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2]},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[3]},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+    }
+  },
+  {
+    goal = '3rd Coal',
+    position = {x=-40, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '3rd Coal',
+    position = {x=-70, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.stone[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.stone[2], count=1, fuel='coal'},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.coal[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.coal[2], count=1, fuel='coal'},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.coal[3], count=2, fuel='coal'},
+    }
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-49, y=16},
+    direction = defines.direction.northeast,
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-18, y=16},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.pickup, structure=structures.stoneFurnace.copper[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.copper[1], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[2], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[3]},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[3], count=1, fuel='coal'},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+    }
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-40, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-70, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
+    }
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-49, y=16},
+    direction = defines.direction.northeast,
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-18, y=16},
+    direction = defines.direction.east,
+    tasks = {
+      {call=tasks.pickup, structure=structures.stoneFurnace.copper[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.copper[1], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[1], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[2], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[2], count=1, fuel='coal'},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[3], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[3], count=1, fuel='coal'},
+      {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
+    }
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-40, y=38},
+    direction = defines.direction.southwest,
+  },
+  {
+    goal = '3rd Stone',
+    position = {x=-70, y=37},
+    direction = defines.direction.west,
+    tasks = {
+      {call=tasks.pickupFromChest, structure=structures.chest.stone[1]},
+      {call=tasks.placeEntity, structure=structures.burnerMiningDrill.stone[3], count=2, fuel='coal'},
+      {call=tasks.craft, count=1, recipe='burner-mining-drill'},
+      {call=tasks.craft, count=1, recipe='stone-furnace'},
+      {call=tasks.pickupFromChest, structure=structures.chest.coal[1]},
     }
   },
 }
+
 
 return steps
