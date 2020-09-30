@@ -56,6 +56,10 @@ function firstTick(player)
   player.set_quick_bar_slot(7, 'stone-furnace')
   player.set_quick_bar_slot(8, 'burner-mining-drill')
   player.set_quick_bar_slot(9, 'wooden-chest')
+  player.set_quick_bar_slot(10, 'electronic-circuit')
+  player.set_quick_bar_slot(11, 'offshore-pump')
+  player.set_quick_bar_slot(12, 'boiler')
+  player.set_quick_bar_slot(13, 'steam-engine')
 end
 
 script.on_event(defines.events.on_tick,
