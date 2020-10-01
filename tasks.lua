@@ -191,7 +191,7 @@ end
 
 local function mineEntity(table, player)
   local distance = helper.getDistance(player.position, table.param)
-  if distance > 3 then
+  if distance > 1 then
     return false
   end
 
@@ -222,8 +222,10 @@ local function mineEntity(table, player)
   local entities = player.surface.find_entities_filtered{area = area, type = table.type}
   if #entities > 0 then
     log('mine entity')
-    player.update_selected_entity(table.param)
-    player.mining_state = {mining = true, position=table.param}
+    local entity = entities[1]
+    player.update_selected_entity(entity.position)
+    player.mining_state = {mining = true, position=entity.position}
+    player.walking_state = {walking = false}
     return false
   end
   return true

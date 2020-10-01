@@ -7,9 +7,9 @@ local steps = {
     position = {x=-32, y=32},
     direction = defines.direction.southwest,
     tasks = {
+      {call=tasks.mineEntity, param={x=-21, y=22}, type="tree"},
       {call=tasks.placeEntity, structure=structures.burnerMiningDrill.iron[1], count=1, fuel='wood'},
       {call=tasks.placeEntity, structure=structures.stoneFurnace.iron[1]},
-      {call=tasks.mineEntity, param={x=-21, y=22}, type="tree"},
       {call=tasks.craft, count=3, recipe='iron-gear-wheel'},
       {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[1], count=2, fuel='wood'},
       {call=tasks.fuelEntity, structure=structures.stoneFurnace.iron[1], count=2, fuel='wood'},
@@ -24,7 +24,6 @@ local steps = {
       {call=tasks.craft, count=1, recipe='stone-furnace'},
       {call=tasks.mineEntity, param={x=-61, y=30}, type="tree"},
       {call=tasks.mineEntity, param={x=-65, y=30}, type="tree"},
-      {call=tasks.mineEntity, param={x=-66, y=32}, type="tree"},
       {call=tasks.mineEntity, param={x=-68, y=30}, type="tree"},
       {call=tasks.craft, count=2, recipe='wooden-chest'},
       {call=tasks.mineEntity, param={x=-73, y=31}, type="resource", limit={type="coal", count=8}},
@@ -32,7 +31,7 @@ local steps = {
   },
   {
     goal = 'Back',
-    position = {x=-44, y=32},
+    position = {x=-44, y=30},
     direction = defines.direction.east,
   },
   {
@@ -54,12 +53,12 @@ local steps = {
   },
   {
     goal = 'Coal drill',
-    position = {x=-71, y=34},
+    position = {x=-68, y=34},
     direction = defines.direction.west,
     tasks = {
       {call=tasks.placeEntity, structure=structures.burnerMiningDrill.coal[1], fuel='coal', count=2},
       {call=tasks.placeEntity, structure=structures.chest.coal[1], direction=defines.direction.west},
-      {call=tasks.mineEntity, param={x=-68, y=33}, type="resource", limit={type="coal", count=4}},
+      {call=tasks.mineEntity, param={x=-68, y=34}, type="resource", limit={type="coal", count=4}},
     }
   },
   {
@@ -67,7 +66,7 @@ local steps = {
     position = {x=-43, y=34},
     direction = defines.direction.east,
     tasks = {
-      {call=tasks.mineEntity, param={x=-56, y=32}, type="resource", limit={type="stone", count=15}},
+      {call=tasks.mineEntity, param={x=-55, y=34}, type="resource", limit={type="stone", count=15}},
       {call=tasks.craft, count=3, recipe='stone-furnace'},
     }
   },
@@ -136,7 +135,7 @@ local steps = {
   },
   {
     goal = 'Some wood',
-    position = {x=-72, y=44},
+    position = {x=-72, y=45},
     direction = defines.direction.south,
     tasks = {
       {call=tasks.mineEntity, param={x=-72, y=43}, type="tree"},
@@ -144,15 +143,30 @@ local steps = {
   },
   {
     goal = 'Some wood',
-    position = {x=-51, y=43},
+    position = {x=-51, y=44},
     direction = defines.direction.east,
     tasks = {
-      {call=tasks.mineEntity, param={x=-69, y=43}, type="tree"},
-      {call=tasks.mineEntity, param={x=-66, y=43}, type="tree"},
-      {call=tasks.mineEntity, param={x=-64, y=44}, type="tree"},
-      {call=tasks.mineEntity, param={x=-65, y=43}, type="tree"},
+      {call=tasks.mineEntity, param={x=-71, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-70, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-69, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-68, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-67, y=44}, type="tree"},
       {call=tasks.mineEntity, param={x=-66, y=44}, type="tree"},
-      {call=tasks.mineEntity, param={x=-67, y=45}, type="tree"},
+      {call=tasks.mineEntity, param={x=-65, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-64, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-63, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-62, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-61, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-60, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-59, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-58, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-57, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-56, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-55, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-54, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-53, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-52, y=44}, type="tree"},
+      {call=tasks.mineEntity, param={x=-51, y=44}, type="tree"},
     }
   },
   {

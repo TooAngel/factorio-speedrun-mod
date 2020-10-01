@@ -114,6 +114,10 @@ script.on_event(defines.events.on_tick,
       log(string.format("%d: %d %d %d / %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.milestone, #milestones, global.step, #milestones[global.milestone].steps, global.task, #milestones[global.milestone].steps[global.step].tasks))
     end
 
+		if milestones[global.milestone].steps[global.step].stopHere then
+			return
+		end
+
     if walk(player) then
       executeTask(player)
     end
