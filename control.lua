@@ -1,6 +1,6 @@
 local helper = require('helper')
 local tasks = require('tasks')
-local steps = require('steps')
+local milestones = require('milestones')
 local technologies = require('technologies')
 
 script.on_init(function()
@@ -12,32 +12,37 @@ script.on_init(function()
 end)
 
 function walk(player)
-  if math.abs(player.position.x - steps[global.step].position.x) > 1
-  or math.abs(player.position.y - steps[global.step].position.y) > 1 then
-    player.walking_state = {walking = true, direction = steps[global.step].direction}
-    return
+  if math.abs(player.position.x - milestones[global.milestone].steps[global.step].position.x) > 1
+  or math.abs(player.position.y - milestones[global.milestone].steps[global.step].position.y) > 1 then
+    player.walking_state = {walking = true, direction = milestones[global.milestone].steps[global.step].direction}
+    return true
   end
 
-  if global.task > #steps[global.step].tasks then
+  if global.task > #milestones[global.milestone].steps[global.step].tasks then
     global.step = global.step + 1
     global.task = 1
-    if global.step > #steps then
-      return
+    if global.step > #milestones[global.milestone].steps then
+      global.milestone = global.milestone + 1
+      global.step = 1
+      global.task = 1
+      return false
     end
-    if player.get_goal_description() ~= steps[global.step].goal then
-      player.set_goal_description(steps[global.step].goal)
+    goal = string.format("%s: %s", milestones[global.milestone].name, milestones[global.milestone].steps[global.step].goal)
+    if player.get_goal_description() ~= goal then
+      player.set_goal_description(goal)
     end
   end
+  return true
 end
 
 function executeTask(player)
-  if global.step > #steps then
+  if global.step > #milestones[global.milestone].steps then
     return
   end
-  if not steps[global.step].tasks or global.task > #steps[global.step].tasks  then
+  if not milestones[global.milestone].steps[global.step].tasks or global.task > #milestones[global.milestone].steps[global.step].tasks  then
     return false
   end
-  task = steps[global.step].tasks[global.task]
+  task = milestones[global.milestone].steps[global.step].tasks[global.task]
   if not task then
     return false
   end
@@ -47,7 +52,8 @@ function executeTask(player)
 end
 
 function firstTick(player)
-  player.set_goal_description(steps[1].goal)
+  goal = string.format("%s: %s", milestones[global.milestone].name, milestones[global.milestone].steps[global.step].goal)
+  player.set_goal_description(goal)
   player.set_quick_bar_slot(1, 'wood')
   player.set_quick_bar_slot(2, 'coal')
   player.set_quick_bar_slot(3, 'stone')
@@ -74,6 +80,9 @@ end
 
 script.on_event(defines.events.on_tick,
   function(event)
+    if not global.milestone then
+      global.milestone = 1
+    end
     if not global.step then
       global.step = 1
     end
@@ -88,24 +97,26 @@ script.on_event(defines.events.on_tick,
     if event.tick == 1 then
       firstTick(player)
     end
+
     if global.technology <= #technologies and not  player.force.current_research then
       player.force.add_research(technologies[global.technology])
       global.technology = global.technology + 1
     end
 
-    if steps[global.step] and not steps[global.step].tasks then
-      steps[global.step].tasks = {}
+    if milestones[global.milestone] and milestones[global.milestone].steps[global.step] and not milestones[global.milestone].steps[global.step].tasks then
+      milestones[global.milestone].steps[global.step].tasks = {}
     end
 
-    if global.step > #steps then
+    if global.milestone > #milestones then
       log(string.format("%d: %d %d", event.tick, player.position.x, player.position.y))
       return
     else
-      log(string.format("%d: %d %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.step, #steps, global.task, #steps[global.step].tasks))
+      log(string.format("%d: %d %d %d / %d %d / %d %d / %d", event.tick, player.position.x, player.position.y, global.milestone, #milestones, global.step, #milestones[global.milestone].steps, global.task, #milestones[global.milestone].steps[global.step].tasks))
     end
 
-    walk(player)
-    executeTask(player)
+    if walk(player) then
+      executeTask(player)
+    end
   end
 )
 

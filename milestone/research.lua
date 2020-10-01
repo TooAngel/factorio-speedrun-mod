@@ -1,5 +1,5 @@
-tasks = require('tasks')
-structures = require('structures')
+local tasks = require('tasks')
+local structures = require('structures')
 
 local steps = {
   {
@@ -826,7 +826,7 @@ local steps = {
     direction = defines.direction.southwest,
     tasks = {
       {call=tasks.pickup, structure=structures.stoneFurnace.iron[7]},
-      {call=tasks.fuelEntityChest, structure=structures.chest.coal[2], count=12, fuel='coal'},
+      {call=tasks.fuelEntityChest, structure=structures.chest.coal[2], count=9, fuel='coal'},
     },
   },
   {
@@ -878,6 +878,7 @@ local steps = {
     tasks = {
       {call=tasks.pickup, structure=structures.stoneFurnace.iron[7]},
       {call=tasks.fuelEntityChest, structure=structures.chest.coal[2], count=1, fuel='coal'},
+      {call=tasks.fuelEntity, structure=structures.lab[1], count=1, fuel='automation-science-pack'},
     },
   },
   {
@@ -911,10 +912,10 @@ local steps = {
       -- {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[3], count=1, fuel='coal'},
       {call=tasks.pickup, structure=structures.stoneFurnace.iron[4]},
       -- {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[4], count=1, fuel='coal'},
-      {call=tasks.pickup, structure=structures.stoneFurnace.iron[5]},
+      {call=tasks.pickup, structure=structures.stoneFurnace.iron[5], count=1, fuel='coal'},
       -- {call=tasks.fuelEntity, structure=structures.burnerMiningDrill.iron[5], count=1, fuel='coal'},
       {call=tasks.pickup, structure=structures.stoneFurnace.iron[6]},
-      {call=tasks.fuelEntity, structure=structures.lab[1], count=3, fuel='automation-science-pack'},
+      {call=tasks.fuelEntity, structure=structures.lab[1], count=2, fuel='automation-science-pack'},
     }
   },
 }
