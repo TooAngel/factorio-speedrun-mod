@@ -15,7 +15,7 @@ local function pickupFromChest(table, player)
   end
   log(string.format("pickupFromChest from %s", type))
 
-  area = {
+  local area = {
     {pos.x-1, pos.y-1},
     {pos.x+1, pos.y+1},
   }
@@ -58,19 +58,41 @@ end
 
 
 local function fuelEntity(table, player)
-  if table.structure then
-    type = table.structure.type
-    pos = table.structure.pos
-  else
-    log(string.format("%s not yet in structure format", table.type))
-    type = table.type
-    pos = table.pos
-  end
+  type = table.structure.type
+  pos = table.structure.pos
   log(string.format("fuelEntity %s %d %s", type, table.count, table.fuel))
   helper.getFromInventory({param=table.fuel}, player)
   local entity = player.surface.find_entity(type, pos)
+  local inventory = entity.get_fuel_inventory()
+  if type == 'lab' then
+    inventory = entity.get_inventory(defines.inventory.lab_input)
+  end
   -- don't like this
-  inserted = entity.get_fuel_inventory().insert{name=player.cursor_stack.name, count=table.count}
+  inserted = inventory.insert{name=player.cursor_stack.name, count=table.count}
+  if player.cursor_stack.count - table.count > 0 then
+    player.get_main_inventory().insert{name=player.cursor_stack.name, count=player.cursor_stack.count - table.count}
+  end
+  player.cursor_stack.clear()
+  return true
+end
+
+local function fuelEntityChest(table, player)
+  type = table.structure.type
+  pos = table.structure.pos
+  log(string.format("fuelEntityChest %s %d %s", type, table.count, table.fuel))
+  helper.getFromInventory({param=table.fuel}, player)
+  local area = {
+    {pos.x-1, pos.y-1},
+    {pos.x+1, pos.y+1},
+  }
+  local entities = player.surface.find_entities_filtered{area = area, type = type}
+  local entity = entities[1]
+  if not entity then
+    return false
+  end
+  local inventory = entity.get_inventory(defines.inventory.chest)
+  -- don't like this
+  inserted = inventory.insert{name=player.cursor_stack.name, count=table.count}
   if player.cursor_stack.count - table.count > 0 then
     player.get_main_inventory().insert{name=player.cursor_stack.name, count=player.cursor_stack.count - table.count}
   end
@@ -214,4 +236,5 @@ return {
   fuelEntity=fuelEntity,
   mineEntity=mineEntity,
   placeEntity=placeEntity,
+  fuelEntityChest=fuelEntityChest,
 }

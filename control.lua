@@ -1,6 +1,7 @@
-helper = require('helper')
-tasks = require('tasks')
-steps = require('steps')
+local helper = require('helper')
+local tasks = require('tasks')
+local steps = require('steps')
+local technologies = require('technologies')
 
 script.on_init(function()
 	-- removed crashsite and cutscene start, so on_player_created inventory safe
@@ -60,6 +61,15 @@ function firstTick(player)
   player.set_quick_bar_slot(11, 'offshore-pump')
   player.set_quick_bar_slot(12, 'boiler')
   player.set_quick_bar_slot(13, 'steam-engine')
+  player.set_quick_bar_slot(14, 'small-electric-pole')
+  player.set_quick_bar_slot(15, 'pipe')
+  player.set_quick_bar_slot(16, 'transport-belt')
+  player.set_quick_bar_slot(17, 'inserter')
+  player.set_quick_bar_slot(18, 'copper-cable')
+  player.set_quick_bar_slot(19, 'lab')
+  player.set_quick_bar_slot(20, 'automation-science-pack')
+  player.set_quick_bar_slot(21, 'electric-mining-drill')
+
 end
 
 script.on_event(defines.events.on_tick,
@@ -70,10 +80,17 @@ script.on_event(defines.events.on_tick,
     if not global.task then
       global.task = 1
     end
+    if not global.technology then
+      global.technology = 1
+    end
 
     local player = game.players[1]
     if event.tick == 1 then
       firstTick(player)
+    end
+    if global.technology <= #technologies and not  player.force.current_research then
+      player.force.add_research(technologies[global.technology])
+      global.technology = global.technology + 1
     end
 
     if steps[global.step] and not steps[global.step].tasks then
