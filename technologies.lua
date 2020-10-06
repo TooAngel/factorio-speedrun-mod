@@ -1,3 +1,5 @@
 return {
-  'automation'
+  'automation',
+  'logistics',
+  'electronics',
 }

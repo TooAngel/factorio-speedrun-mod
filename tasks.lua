@@ -126,6 +126,10 @@ local function placeEntity(table, player)
   if table.fuel then
     fuelEntity(table, player)
   end
+  if table.recipe then
+    local entity = player.surface.find_entity(type, pos)
+    entity.set_recipe(table.recipe)
+  end
   return true
 end
 
@@ -191,7 +195,7 @@ end
 
 local function mineEntity(table, player)
   local distance = helper.getDistance(player.position, table.param)
-  if distance > 1 then
+  if distance > 1.4 then
     return false
   end
 

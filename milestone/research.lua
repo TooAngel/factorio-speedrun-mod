@@ -31,7 +31,7 @@ local steps = {
   },
   {
     goal = 'Back',
-    position = {x=-44, y=30},
+    position = {x=-44, y=31},
     direction = defines.direction.east,
   },
   {
