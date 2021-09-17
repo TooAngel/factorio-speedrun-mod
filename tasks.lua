@@ -68,6 +68,10 @@ local function fuelEntity(table, player)
     inventory = entity.get_inventory(defines.inventory.lab_input)
   end
   -- don't like this
+  log(player);
+  log(player.cursor_stack);
+  log(player.cursor_stack.name);
+  log(inventory);
   inserted = inventory.insert{name=player.cursor_stack.name, count=table.count}
   if player.cursor_stack.count - table.count > 0 then
     player.get_main_inventory().insert{name=player.cursor_stack.name, count=player.cursor_stack.count - table.count}
@@ -117,7 +121,8 @@ local function placeEntity(table, player)
    return false
   end
   player.build_from_cursor{position={pos.x, pos.y}, direction=direction}
-  player.clean_cursor()
+  print(player)
+  player.clear_cursor()
   -- Todo somehow check if building was successful
   -- local entity = player.surface.find_entity(table.type, table.pos)
   -- if not entity then

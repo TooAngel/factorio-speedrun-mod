@@ -8,7 +8,8 @@
         "stone": {"frequency": 6, "size": 6, "richness": 6},
         "coal": {"frequency": 6, "size": 6, "richness": 6},
         "uranium-ore": {"frequency": 6, "size": 6, "richness": 6},
-        "crude-oil": {"frequency": 6, "size": 6, "richness": 6}
+        "crude-oil": {"frequency": 6, "size": 6, "richness": 6},
+        "trees": {"frequency": 2, "size": 1, "richness": 1}
     },
     "seed": 2669303796
 }
