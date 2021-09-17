@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "title": "TooAngel Speedrun bot",
   "author": "Tobias Wilken",
-  "factorio_version": "1.0",
+  "factorio_version": "1.1.39",
   "dependencies": ["base >= 1.0"],
   "description": "This mod will launch a rocket as fast as possible."
 }
